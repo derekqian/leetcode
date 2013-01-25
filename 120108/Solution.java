@@ -1,7 +1,14 @@
 public class Solution {
     public boolean isMatchAux(String s, String p) {
         if(s.length()==0) {
-            if(p.length()==0 || (p.length()==1 && p.charAt(0)=='*')) {
+            if(p.length()%2==0) {
+                int i=1;
+                for(;i<p.length();) {
+                    if(p.charAt(i)!='*') {
+                        return false;
+                    }
+                    i++;i++;
+                }
                 return true;
             } else {
                 return false;
@@ -10,17 +17,29 @@ public class Solution {
             if(p.length()==0) {
                 return false;
             } else {
-                switch(p.charAt(0)) {
-		case '*':
-		    return isMatchAux(s.substring(1,s.length()),p) || isMatchAux(s.substring(1,s.length()),p.substring(1,p.length()));
-		case '.':
-		    return isMatchAux(s.substring(1,s.length()),p.substring(1,p.length()));
-		default:
-		    if(s.charAt(0)!=p.charAt(0)) {
-			return false;
-		    } else {
-			return isMatchAux(s.substring(1,s.length()),p.substring(1,p.length()));
-		    }
+                if(p.charAt(0)=='*') {
+                    return false;
+                }
+                if(p.length()>1) {
+                    if(p.charAt(1)=='*') {
+                        if(p.charAt(0)=='.' || s.charAt(0)==p.charAt(0)) {
+                            return isMatchAux(s,p.substring(2,p.length())) || isMatchAux(s.substring(1,s.length()),p);
+                        } else {
+                            return isMatchAux(s,p.substring(2,p.length()));
+                        }
+                    } else {
+                        if(p.charAt(0)=='.' || s.charAt(0)==p.charAt(0)) {
+                            return isMatchAux(s.substring(1,s.length()),p.substring(1,p.length()));
+                        } else {
+                            return false;
+                        }
+                    }
+                } else {
+                    if(p.charAt(0)=='.' || s.charAt(0)==p.charAt(0)) {
+                        return isMatchAux(s.substring(1,s.length()),p.substring(1,p.length()));
+                    } else {
+                        return false;
+                    }
                 }
             }
         }
@@ -35,23 +54,7 @@ public class Solution {
                 return false;
             }
         }
-        boolean star = (p.charAt(0)=='*');
-        String temp = new String();
-        temp = temp.concat(p.substring(0,1));
-        for(int i=1; i<p.length(); i++) {
-            if(star) {
-                if(p.charAt(i)!='*') {
-                    star = !star;
-                    temp = temp.concat(p.substring(i,i+1));
-                }
-            } else {
-                temp = temp.concat(p.substring(i,i+1));
-                if(p.charAt(i)=='*') {
-                    star = true;
-                }
-            }
-        }
-        return isMatchAux(s,temp);
+        return isMatchAux(s,p);
     }
     public static void main(String[] args) {
 	Solution soln = new Solution();
